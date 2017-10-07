@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import './App.css';
 
 import { range as d3range} from 'd3-array';
-import moment from 'moment';
+
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
 
 import runningData from './data/stravaAll.json';
 import racesData from './data/races.json'
 import YearRunSummary from './components/YearRunSummary.js';
 
+//extending moment.js with moment-range.js
+const moment = extendMoment(Moment);
 
 class App extends Component {
   render() {
