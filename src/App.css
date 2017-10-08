@@ -29,6 +29,16 @@
   stroke: lightgray;
 }
 
+.scaleLine{
+  fill: none;
+  stroke: lightgray;
+}
+
+.scaleLabel{
+  fill: lightgray;
+  font-size: 0.8em;
+}
+
 line.activityDistance {
   stroke: #ffeda0;
   opacity: 1;
