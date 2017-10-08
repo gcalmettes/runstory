@@ -21,6 +21,9 @@ class YearRunDistanceMovingSum extends Component {
     this.getTimeRange = this.getTimeRange.bind(this);
     this.getTimeRangeActivities = this.getTimeRangeActivities.bind(this);
     this.getMovingSum = this.getMovingSum.bind(this);
+    this.getZoneIndices = this.getZoneIndices.bind(this);
+    this.getMovingSumArray = this.getMovingSumArray.bind(this);
+    this.getArcZones = this.getArcZones.bind(this);
   }
 
   //calculate moving sum distance array
@@ -39,49 +42,45 @@ class YearRunDistanceMovingSum extends Component {
     return d3sum(timeRangeActivities, d => d[variable])
   }
 
-  componentWillMount(){
-
+  getMovingSumArray(yearTimeRange, data){
     //calculate moving sum for distance and elevation
-    this.movingSumArray = Array.from(this.props.yearTimeRange.by("day")).map(d => {
+    let movingSumArray = Array.from(yearTimeRange.by("day")).map(d => {
       return {date: d,
-              distanceKm: this.getMovingSum(d, this.props.data, undefined, undefined,"distanceKm"),
-              elevationUpM: this.getMovingSum(d, this.props.data, undefined, undefined, "elevationUpM")
+              distanceKm: this.getMovingSum(d, data, undefined, undefined,"distanceKm"),
+              elevationUpM: this.getMovingSum(d, data, undefined, undefined, "elevationUpM")
               }
       })
 
+    //add distance in Mi/feet and populate zoneIndices array
+    movingSumArray.forEach((d,i) => {
+      d.distanceMi = d.distanceKm * this.props.kmToMiles
+      d.elevationUpFt = d.elevationUpM * this.props.mToFt
+      d.elevationDownFt = d.elevationDownM * this.props.mToFt
+
+    })
+
+    return movingSumArray
+  }
+
+  getZoneIndices(movingSumArray, lowThreshold, sweetThreshold, dangerThreshold){
     //detect zones of weekly distance
     let zonesIndices = {low: [],
                         sweet: [],
                         danger: []
                         }
 
-    //add distance in Mi/feet and populate zoneIndices array
-    this.movingSumArray.forEach((d,i) => {
-      d.distanceMi = d.distanceKm * this.props.kmToMiles
-      d.elevationUpFt = d.elevationUpM * this.props.mToFt
-      d.elevationDownFt = d.elevationDownM * this.props.mToFt
-
-      if (d.distanceMi >= this.props.dangerDist) zonesIndices.danger.push(i)
-      if (d.distanceMi < this.props.dangerDist && d.distanceMi >= this.props.sweetDist) zonesIndices.sweet.push(i)
+    //populate zoneIndices array
+    movingSumArray.forEach((d,i) => {
+      if (d.distanceMi >= dangerThreshold) zonesIndices.danger.push(i)
+      if (d.distanceMi < dangerThreshold && d.distanceMi >= sweetThreshold) zonesIndices.sweet.push(i)
       else zonesIndices.low.push(i)
     })
 
-    const radiusScale = d3scaleLinear()
-        .domain([0, 180])
-        .range([140, this.props.height/2])
-    
-    //radial projection, with start position at Pi/2
-    const xScale = (day, distance) => Math.cos(this.props.angleScale(day)-Math.PI/2)*radiusScale(distance)
-    const yScale = (day, distance) => Math.sin(this.props.angleScale(day)-Math.PI/2)*radiusScale(distance)
+    return zonesIndices
 
-    this.lineGenerator = d3line()
-      .x(d => xScale(d.date, d.distanceMi))
-      .y(d => yScale(d.date, d.distanceMi))
-      .curve(d3curveCatmullRom)
+  }
 
-    //send the movingSumArray to parent so svg defs can be created
-    this.props.addSvgMaskDefs(this.movingSumArray)
-
+  getArcZones(zonesIndices, radiusScale){
     //gather consecutive indices
     for (let i=0; i<Object.keys(zonesIndices).length; i++) {
       let array = zonesIndices[Object.keys(zonesIndices)[i]]
@@ -102,7 +101,7 @@ class YearRunDistanceMovingSum extends Component {
       zonesIndices[Object.keys(zonesIndices)[i]] = result
     }
 
-    this.arcZones = Object.keys(zonesIndices).map(zoneName => 
+    let arcZones = Object.keys(zonesIndices).map(zoneName => 
         zonesIndices[zoneName].map((indicesArray,i) => {
           let limits = [indicesArray[0], indicesArray[indicesArray.length-1]]
           if (limits[0]!==0) limits[0]=limits[0]-1
@@ -123,10 +122,46 @@ class YearRunDistanceMovingSum extends Component {
         })
       );
 
+    return arcZones
+
+  }
+
+  componentWillMount(){
+
+    this.movingSumArray = this.getMovingSumArray(this.props.yearTimeRange, this.props.data)
+
+    this.zoneIndices = this.getZoneIndices(this.movingSumArray, this.props.lowDist, this.props.sweetDist, this.props.dangerDist)
+
+    this.radiusScale = d3scaleLinear()
+        .domain([0, 180])
+        .range([this.props.height/3.6, this.props.height/2])
+    
+    //radial projection, with start position at Pi/2
+    const xScale = (day, distance) => Math.cos(this.props.angleScale(day)-Math.PI/2)*this.radiusScale(distance)
+    const yScale = (day, distance) => Math.sin(this.props.angleScale(day)-Math.PI/2)*this.radiusScale(distance)
+
+    this.lineGenerator = d3line()
+      .x(d => xScale(d.date, d.distanceMi))
+      .y(d => yScale(d.date, d.distanceMi))
+      .curve(d3curveCatmullRom)
+
+    //send the movingSumArray to parent so svg defs can be created
+    this.props.addSvgMaskDefs(this.movingSumArray)
+
+    //get the arcZones from thresholds values
+    this.arcZones = this.getArcZones(this.zoneIndices, this.radiusScale)
+
+  }
+
+  componentDidUpdate(){
+    //update arcZones
+    this.zoneIndices = this.getZoneIndices(this.movingSumArray, this.props.lowDist, this.props.sweetDist, this.props.dangerDist)
+    this.arcZones = this.getArcZones(this.zoneIndices, this.radiusScale)
   }
 
 
   render() {
+
     return (
       <g transform={`translate(${this.props.translate})`}>
         {this.arcZones}

@@ -32,9 +32,7 @@ class App extends Component {
 
     const runningYears = years.map(year => {
       return (
-        <div key={year}>
-          <YearRunSummary allRuns={runs} allRaces={racesData} year={year}/>
-        </div>
+          <YearRunSummary allRuns={runs} allRaces={racesData} year={year} key={`graphYear${year}`}/>
         )
     });
 
