@@ -21,6 +21,14 @@
   font-family: sans-serif;
 }
 
+.monthLabel{
+  fill: lightgray;
+}
+
+.monthLine{
+  stroke: lightgray;
+}
+
 line.activityDistance {
   stroke: #ffeda0;
   opacity: 1;
