@@ -134,7 +134,7 @@ class YearRunDistanceMovingSum extends Component {
 
     this.radiusScale = d3scaleLinear()
         .domain([0, 180])
-        .range([this.props.height/3.6, this.props.height/2])
+        .range([this.props.height/3.8, this.props.height/2.1])
     
     //radial projection, with start position at Pi/2
     const xScale = (day, distance) => Math.cos(this.props.angleScale(day)-Math.PI/2)*this.radiusScale(distance)
