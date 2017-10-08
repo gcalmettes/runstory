@@ -47,12 +47,12 @@ path.movingSumDistance {
   fill: none;
 }
 
-path.lowZoneArc {
+.lowZone {
   fill: #fee0d2;
 }
-path.sweetZoneArc {
+.sweetZone {
   fill: #fc9272;
 }
-path.dangerZoneArc {
+.dangerZone {
   fill: #de2d26;
 }

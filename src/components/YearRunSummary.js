@@ -101,10 +101,26 @@ class YearRunSummary extends Component {
     return (
       <div style={{display: "inline-block"}}>
         <div>
+          <span>
+            <svg width={35} height={12}>
+              <rect x={0} y={0} width={12} height={12} className="lowZone" />
+              <line x1={14} y1={12} x2={16} y2={0} style={{stroke: "black"}}/>
+              <rect x={18} y={0} width={12} height={12} className="sweetZone" />
+            </svg>
+            transition
+          </span>
           <input type="range" min={this.state.lowDist} max={this.state.dangerDist} value={this.state.sweetDist} step="1" onChange={this.adjustThresholdSweet} />
           <span>{`${this.state.sweetDist} miles`}</span>
         </div>
         <div>
+          <span>
+            <svg width={35} height={12}>
+              <rect x={0} y={0} width={12} height={12} className="sweetZone" />
+              <line x1={14} y1={12} x2={16} y2={0} style={{stroke: "black"}}/>
+              <rect x={18} y={0} width={12} height={12} className="dangerZone" />
+            </svg>
+            transition
+          </span>
           <input type="range" min={this.state.sweetDist} max="300" value={this.state.dangerDist} step="1" onChange={this.adjustThresholdDanger} />
           <span>{`${this.state.dangerDist} miles`}</span>
         </div>

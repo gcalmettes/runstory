@@ -113,7 +113,7 @@ class YearRunDistanceMovingSum extends Component {
 
           return (
             <path
-              className = {`${zoneName}ZoneArc`}
+              className = {`${zoneName}Zone`}
               d = {arcZone()}
               key = {`${zoneName}Arc${i}`}
               mask = {`url(#maskMovingSum${this.props.year})`}
