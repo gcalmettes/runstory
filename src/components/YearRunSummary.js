@@ -100,7 +100,7 @@ class YearRunSummary extends Component {
 
     return (
       <div style={{display: "inline-block"}}>
-        <div>
+        <div style={{paddingTop: "30px", display: "inline-block"}}>
           <span>
             <svg width={35} height={12}>
               <rect x={0} y={0} width={12} height={12} className="lowZone" />
