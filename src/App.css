@@ -16,3 +16,25 @@
 .App-intro {
   font-size: large;
 }
+
+line.activityDistance {
+  stroke: #ffeda0;
+  opacity: 1;
+  stroke-width: 2;
+}
+
+path.movingSumDistance {
+  stroke: black;
+  stroke-width: 2px;
+  fill: none;
+}
+
+path.lowZoneArc {
+  fill: #fee0d2;
+}
+path.sweetZoneArc {
+  fill: #fc9272;
+}
+path.dangerZoneArc {
+  fill: #de2d26;
+}

@@ -20,8 +20,8 @@ class App extends Component {
     
     const runs = runningData.allActivities
     runs.forEach(d => {
-      d.date = moment(d.date),
-      d.id = +d.id,
+      d.date = moment(d.date)
+      d.id = +d.id
       d.xDay = d.date.format("MM-DD")
     })
     runs.sort((a, b) => a.date-b.date)
@@ -44,7 +44,7 @@ class App extends Component {
 
       <div className="App">
         <div className="App-header">
-          <h2>GDH project viewer</h2>
+          <h2>runStory</h2>
         </div>
         {runningYears}
       </div>
