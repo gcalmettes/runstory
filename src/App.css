@@ -17,8 +17,18 @@
   font-size: large;
 }
 
+.axisLabel{
+  font-family: sans-serif;
+}
+
 line.activityDistance {
   stroke: #ffeda0;
+  opacity: 1;
+  stroke-width: 2;
+}
+
+line.activityElevation {
+  stroke: #9ecae1;
   opacity: 1;
   stroke-width: 2;
 }

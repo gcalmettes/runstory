@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 
 import {scaleTime as d3scaleTime} from 'd3-scale'
+import {sum as d3sum} from 'd3-array'
 
 // import moment from 'moment';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 
 import YearRunDistance from './YearRunDistance.js';
+import YearRunElevation from './YearRunElevation.js';
 import YearRunDistanceMovingSum from './YearRunDistanceMovingSum.js';
 import YearRunDistanceMovingSumMask from './YearRunDistanceMovingSumMask.js';
+import YearRunAxes from './YearRunAxes.js';
 
 //extending moment.js with moment-range.js
 const moment = extendMoment(Moment);
@@ -36,7 +39,9 @@ class YearRunSummary extends Component {
       dangerDist: 95, //in miles
       kmToMiles: 0.621371,
       mToFt: 3.28084,
-      maskArray: []
+      maskArray: [],
+      summaryTotalDistanceMi: 0,
+      summaryTotalElevationFt: 0
     };
 
     this.addSvgMaskDefs = this.addSvgMaskDefs.bind(this)
@@ -52,6 +57,10 @@ class YearRunSummary extends Component {
       d.elevationUpFt = d.elevationUpM * this.state.mToFt
       d.elevationDownFt = d.elevationDownM * this.state.mToFt
     })
+
+  const totalDistanceMi = Math.floor(d3sum(data, d => d.distanceMi))
+  const totalElevationFt = Math.floor(d3sum(data, d => d.elevationUpFt))
+
   	const races = this.props.allRaces.filter(d => d.date.year() === this.props.year)
 
     const yearTimeRange = moment.range(new Date(this.props.year, 0, 1), new Date(this.props.year, 11, 31))
@@ -66,6 +75,8 @@ class YearRunSummary extends Component {
       races: races,
       yearTimeRange: yearTimeRange,
       angleScale: angleScale,
+      summaryTotalDistanceMi: totalDistanceMi,
+      summaryTotalElevationFt: totalElevationFt
     })
 
   }
@@ -91,16 +102,18 @@ class YearRunSummary extends Component {
       <div style={{display: "inline-block"}}>
         <div>
           <input type="range" min={this.state.lowDist} max={this.state.dangerDist} value={this.state.sweetDist} step="1" onChange={this.adjustThresholdSweet} />
-          <span>{this.state.sweetDist}</span>
+          <span>{`${this.state.sweetDist} miles`}</span>
         </div>
         <div>
           <input type="range" min={this.state.sweetDist} max="300" value={this.state.dangerDist} step="1" onChange={this.adjustThresholdDanger} />
-          <span>{this.state.dangerDist}</span>
+          <span>{`${this.state.dangerDist} miles`}</span>
         </div>
         <svg width={width} height={height}> 
           <YearRunDistanceMovingSumMask maskArray={this.state.maskArray} {...this.state}/>
           <YearRunDistanceMovingSum translate={[width/2, height/2]} addSvgMaskDefs={this.addSvgMaskDefs} {...this.state}/>
           <YearRunDistance translate={[width/2, height/2]} {...this.state}/>
+          <YearRunElevation translate={[width/2, height/2]} {...this.state}/>
+          <YearRunAxes translate={[width/2, height/2]} {...this.state}/>
         </svg>
       </div>
     );

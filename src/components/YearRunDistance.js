@@ -25,7 +25,7 @@ class YearRunDistance extends Component {
           y1={yScale(d.date, 0)}
           y2={yScale(d.date, d.distanceMi)}
           className="activityDistance"
-          key={`line${this.props.year}-${i}`}
+          key={`lineDistance${this.props.year}-${i}`}
         />
         )
     })
