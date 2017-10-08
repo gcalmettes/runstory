@@ -58,8 +58,8 @@ class YearRunSummary extends Component {
       d.elevationDownFt = d.elevationDownM * this.state.mToFt
     })
 
-  const totalDistanceMi = Math.floor(d3sum(data, d => d.distanceMi))
-  const totalElevationFt = Math.floor(d3sum(data, d => d.elevationUpFt))
+    const totalDistanceMi = Math.floor(d3sum(data, d => d.distanceMi))
+    const totalElevationFt = Math.floor(d3sum(data, d => d.elevationUpFt))
 
   	const races = this.props.allRaces.filter(d => d.date.year() === this.props.year)
 
@@ -68,7 +68,7 @@ class YearRunSummary extends Component {
     //scales definitions and radial projection
     const angleScale = d3scaleTime()
       .domain([moment(new Date(this.props.year, 0, 1)), moment(new Date(this.props.year, 11, 31))])
-      .range([0, 2*Math.PI])
+      .range([0, 1.9*Math.PI])
 
     this.setState({
       data: data,
