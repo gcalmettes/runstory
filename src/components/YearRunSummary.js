@@ -110,7 +110,7 @@ class YearRunSummary extends Component {
             transition
           </span>
           <input type="range" min={this.state.lowDist} max={this.state.dangerDist} value={this.state.sweetDist} step="1" onChange={this.adjustThresholdSweet} />
-          <span>{`${this.state.sweetDist} miles`}</span>
+          <span>{`${this.state.sweetDist} miles/week`}</span>
         </div>
         <div>
           <span>
@@ -122,7 +122,7 @@ class YearRunSummary extends Component {
             transition
           </span>
           <input type="range" min={this.state.sweetDist} max="300" value={this.state.dangerDist} step="1" onChange={this.adjustThresholdDanger} />
-          <span>{`${this.state.dangerDist} miles`}</span>
+          <span>{`${this.state.dangerDist} miles/week`}</span>
         </div>
         <svg width={width} height={height}> 
           <YearRunDistanceMovingSumMask maskArray={this.state.maskArray} {...this.state}/>
